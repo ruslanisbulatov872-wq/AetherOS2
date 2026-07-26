@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# aether-about-gui — a visual "About AetherOS" window (logo + version + credits).
+# The terminal version ('aether-about') still exists for scripting/SSH use.
+set -euo pipefail
+
+command -v zenity >/dev/null 2>&1 || { aether-about; exit 0; }
+
+version="$(grep -m1 '^BUILD_ID=' /etc/os-release 2>/dev/null | cut -d= -f2 || echo rolling)"
+kernel="$(uname -r)"
+
+zenity --info \
+    --title="О системе AetherOS" \
+    --width=460 \
+    --window-icon=/usr/share/icons/aetheros/aetheros-logo.png \
+    --text="<span font='16'><b>AetherOS</b></span>\n<i>Arch-based • simple by design</i>\n\nВерсия: ${version}\nЯдро: Linux ${kernel}\nРабочий стол: Aether Desktop (XFCE)\nУстановщик: Aether Installer\n\nФирменные функции: Aether Cycle, Aether Journal,\nAether Store, Aether Welcome.\n\nПолный список команд: aether-info" \
+    2>/dev/null || true

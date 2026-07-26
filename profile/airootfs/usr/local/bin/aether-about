@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cat <<'TXT'
+AetherOS
+--------
+An Arch Linux-based distribution combining Arch's flexibility,
+Ubuntu's ease of installation, and Linux Mint's polished desktop
+experience — under its own AetherOS branding, with an original
+ghost mascot as its signature mark.
+
+Core:       Arch Linux packages, rolling release (full pacman/AUR access)
+Desktop:    Aether Desktop (XFCE, compositor + subtle window transparency)
+Terminal:   Aether Terminal
+Installer:  Aether Installer (Calamares-based, auto-detects other OSes
+            for dual-boot via os-prober)
+Packages:   Aether Package Manager (pacman + yay/AUR wrapper)
+Default live user: admin / admin (change immediately after install)
+Sounds:     5 original AetherOS system sounds — run 'aether-sound-test'
+Themes:     'aether-theme light' / 'aether-theme dark'
+
+Run 'aether-info' for live system details and the full command list.
+TXT

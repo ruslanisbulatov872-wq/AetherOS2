@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# aether-wave — a decorative animated ASCII sound-wave, purely for fun.
+# Press Ctrl+C to stop.
+set -euo pipefail
+trap 'tput cnorm; clear; exit 0' INT TERM
+tput civis
+
+width=$(tput cols)
+height=12
+t=0
+
+while true; do
+    clear
+    for ((row = 0; row < height; row++)); do
+        line=""
+        for ((col = 0; col < width; col += 2)); do
+            # simple layered sine approximation using awk for float math
+            v=$(awk -v c="$col" -v t="$t" -v h="$height" -v r="$row" 'BEGIN {
+                pi = 3.14159265
+                y = sin((c/10.0) + t/5.0) * (h/2.5) + sin((c/6.0) - t/3.0) * (h/6.0)
+                mid = h/2
+                if (r >= mid + y - 0.6 && r <= mid + y + 0.6) print 1; else print 0
+            }')
+            if [ "$v" = "1" ]; then
+                line+="\033[0;36m~\033[0m"
+            else
+                line+=" "
+            fi
+        done
+        echo -e "$line"
+    done
+    t=$((t + 1))
+    sleep 0.08
+done

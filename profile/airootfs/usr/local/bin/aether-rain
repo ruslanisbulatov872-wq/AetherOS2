@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# aether-rain — a little decorative "digital rain" easter egg for the terminal.
+# Press Ctrl+C to stop.
+set -euo pipefail
+
+if command -v cmatrix >/dev/null 2>&1; then
+    exec cmatrix -C green
+fi
+
+# Lightweight fallback if cmatrix isn't installed: simple falling-character rain.
+trap 'tput cnorm; clear; exit 0' INT TERM
+tput civis
+cols=$(tput cols)
+chars="01AETHEROS.:*~"
+declare -a drop
+for ((i = 0; i < cols; i++)); do drop[i]=$((RANDOM % 20)); done
+
+clear
+while true; do
+    line=""
+    for ((i = 0; i < cols; i++)); do
+        if (( RANDOM % 12 == 0 )); then
+            c="${chars:RANDOM % ${#chars}:1}"
+            line+="\033[0;32m${c}\033[0m"
+        else
+            line+=" "
+        fi
+    done
+    echo -e "$line"
+    sleep 0.06
+done

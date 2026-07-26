@@ -1,0 +1,49 @@
+# AetherOS GRUB theme
+title-text: ""
+desktop-image: "background.png"
+desktop-color: "#0d1426"
+terminal-box: "terminal_box_*.png"
+
++ image {
+    left = 6%
+    top = 6%
+    width = 90
+    height = 90
+    file = "logo.png"
+}
+
++ label {
+    left = 6%
+    top = 18%
+    width = 60%
+    height = 40
+    text = "AetherOS"
+    color = "#e6ecff"
+    font = "DejaVu Sans Bold 24"
+    align = "left"
+}
+
++ boot_menu {
+    left = 15%
+    top = 35%
+    width = 70%
+    height = 40%
+    item_color = "#8cc4ff"
+    selected_item_color = "#ffffff"
+    selected_item_pixmap_style = "select_*.png"
+    item_height = 32
+    item_padding = 8
+    item_spacing = 6
+    icon_width = 24
+    icon_height = 24
+}
+
++ label {
+    left = 5%
+    top = 90%
+    width = 90%
+    height = 20
+    text = "Enter — загрузить   E — редактировать   C — консоль"
+    color = "#5a6a8c"
+    align = "center"
+}

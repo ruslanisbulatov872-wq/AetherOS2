@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# wifi-info — list Wi-Fi networks, or connect: wifi-info connect <SSID>
+set -euo pipefail
+
+if ! command -v nmcli >/dev/null 2>&1; then
+    echo "NetworkManager (nmcli) not found." >&2
+    exit 1
+fi
+
+case "${1:-list}" in
+    list)
+        nmcli device wifi list
+        ;;
+    connect)
+        ssid="${2:?Usage: wifi-info connect <SSID>}"
+        nmcli device wifi connect "${ssid}" --ask
+        ;;
+    *)
+        echo "Usage: wifi-info [list|connect <SSID>]" >&2
+        exit 1
+        ;;
+esac

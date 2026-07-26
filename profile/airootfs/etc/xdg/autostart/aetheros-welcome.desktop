@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=AetherOS Welcome (first run)
+Exec=sh -c '[ -f "$HOME/.local/share/aetheros/welcomed" ] || aether-welcome'
+X-GNOME-Autostart-enabled=true
+NoDisplay=true

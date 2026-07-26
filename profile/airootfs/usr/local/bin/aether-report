@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# aether-report — write a full diagnostic report to disk
+set -euo pipefail
+
+out="${1:-$HOME/aetheros-diagnostic-report-$(date +%Y%m%d-%H%M%S).txt}"
+
+{
+    echo "AetherOS diagnostic report"
+    echo "Generated: $(date)"
+    echo
+    aether-check
+    echo
+    echo "=== Installed packages ($(pacman -Qq | wc -l)) ==="
+    pacman -Q
+} > "${out}" 2>&1
+
+echo "Report written to: ${out}"

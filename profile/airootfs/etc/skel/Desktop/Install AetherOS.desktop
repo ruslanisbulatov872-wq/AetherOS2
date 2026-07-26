@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Install AetherOS
+Name[ru]=Установить AetherOS
+Comment=Install AetherOS to your disk
+Comment[ru]=Установить AetherOS на диск
+Exec=sudo /usr/bin/calamares
+Icon=/usr/share/icons/aetheros/aetheros-logo.png
+Terminal=false
+Categories=System;
+StartupNotify=true

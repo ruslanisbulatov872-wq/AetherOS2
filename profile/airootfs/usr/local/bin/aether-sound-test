@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# aether-sound-test — preview all 5 AetherOS system sounds
+set -euo pipefail
+
+SND=/usr/share/sounds/aetheros/stereo
+
+play() {
+    if command -v paplay >/dev/null 2>&1; then
+        paplay "$1"
+    elif command -v aplay >/dev/null 2>&1; then
+        aplay -q "$1"
+    else
+        echo "No audio player (paplay/aplay) found." >&2
+        exit 1
+    fi
+}
+
+echo "1/5 — Startup (desktop-login)"
+play "${SND}/desktop-login.wav"; sleep 0.5
+
+echo "2/5 — Error (dialog-error)"
+play "${SND}/dialog-error.wav"; sleep 0.5
+
+echo "3/5 — System requirement / privilege prompt (dialog-warning)"
+play "${SND}/dialog-warning.wav"; sleep 0.5
+
+echo "4/5 — AetherOS signature sound (complete)"
+play "${SND}/complete.wav"; sleep 0.5
+
+echo "5/5 — Notification (message)"
+play "${SND}/message.wav"
+
+echo "Done."

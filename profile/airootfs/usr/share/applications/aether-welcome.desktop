@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Начало работы
+GenericName=Get Started
+Comment=Простой обзор AetherOS для новичков
+Comment[en]=A simple beginner's tour of AetherOS
+Exec=aether-welcome
+Icon=/usr/share/icons/aetheros/aetheros-logo.png
+Terminal=false
+Categories=System;

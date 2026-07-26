@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# aether-check — quick diagnostic scan, prints a summary to stdout
+# Use 'aether-report' to save the full version to a file.
+set -euo pipefail
+
+section() { printf '\n=== %s ===\n' "$1"; }
+
+section "Kernel"
+uname -a
+
+section "Memory"
+free -h
+
+section "CPU load"
+uptime
+
+section "Disks"
+lsblk -o NAME,SIZE,FSTYPE,MOUNTPOINT,FSAVAIL,FSUSE% 2>/dev/null || df -h
+
+section "Failed systemd units"
+systemctl --failed --no-legend --no-pager || true
+
+section "Kernel errors (dmesg, last 20)"
+dmesg --level=err,crit,alert,emerg 2>/dev/null | tail -n 20 || echo "  (dmesg not accessible without sudo)"
+
+section "Network"
+if command -v nmcli >/dev/null 2>&1; then
+    nmcli -t -f DEVICE,TYPE,STATE,CONNECTION device status
+else
+    ip -brief address
+fi
+
+section "Result"
+if systemctl is-system-running >/dev/null 2>&1; then
+    echo "System status: OK"
+else
+    echo "System status: DEGRADED — see 'Failed systemd units' above"
+fi

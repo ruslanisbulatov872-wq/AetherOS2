@@ -1,0 +1,6 @@
+[Unit]
+Description=AetherOS Aether Cycle — apply the time-of-day wallpaper mood
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/aether-cycle

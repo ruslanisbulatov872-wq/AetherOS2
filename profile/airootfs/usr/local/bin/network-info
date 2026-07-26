@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== AetherOS Network Information ==="
+if command -v nmcli >/dev/null 2>&1; then
+    nmcli device status
+    echo
+    nmcli connection show
+else
+    ip -brief address
+    echo
+    ip route
+fi

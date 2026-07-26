@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+echo "=== Local addresses ==="
+ip -brief address
+echo
+echo "=== Public IP ==="
+curl -fsSL --max-time 3 ifconfig.me 2>/dev/null && echo || echo "(no internet access)"

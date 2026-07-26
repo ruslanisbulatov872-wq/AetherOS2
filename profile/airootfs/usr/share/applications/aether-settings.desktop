@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Aether Settings
+Comment=Configure AetherOS: appearance, network, sound, users
+Comment[ru]=Настройки AetherOS: внешний вид, сеть, звук, пользователи
+Exec=xfce4-settings-manager
+Icon=/usr/share/icons/aetheros/aetheros-logo.png
+Terminal=false
+Categories=Settings;

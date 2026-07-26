@@ -1,0 +1,11 @@
+NAME="AetherOS"
+PRETTY_NAME="AetherOS"
+ID=aetheros
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;90;170;255"
+HOME_URL="https://example.invalid/aetheros"
+DOCUMENTATION_URL="https://example.invalid/aetheros/docs"
+SUPPORT_URL="https://example.invalid/aetheros/support"
+BUG_REPORT_URL="https://example.invalid/aetheros/issues"
+LOGO=aetheros

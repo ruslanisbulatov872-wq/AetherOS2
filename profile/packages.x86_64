@@ -1,0 +1,110 @@
+# =============================================================
+# AetherOS package list — one package per line, '#' = comment
+# =============================================================
+
+# --- Base system ---
+base
+base-devel
+linux
+linux-firmware
+linux-headers
+mkinitcpio
+sudo
+nano
+vim
+git
+wget
+curl
+htop
+man-db
+man-pages
+bash-completion
+networkmanager
+network-manager-applet
+openssh
+reflector
+pacman-contrib
+os-prober
+
+# --- Bootloader (installed system, not the live medium) ---
+grub
+syslinux
+efibootmgr
+dosfstools
+mtools
+
+# --- Filesystem / disk tools ---
+ntfs-3g
+exfatprogs
+gptfdisk
+parted
+
+# --- Audio ---
+pipewire
+pipewire-alsa
+pipewire-pulse
+pipewire-jack
+wireplumber
+pavucontrol
+
+# --- Bluetooth ---
+bluez
+bluez-utils
+blueman
+
+# --- Display / graphics stack ---
+xorg-server
+xorg-xinit
+xorg-xrandr
+mesa
+xf86-video-vesa
+
+# --- Desktop environment: XFCE (customized as "Aether Desktop") ---
+xfce4
+xfce4-goodies
+lightdm
+lightdm-gtk-greeter
+lightdm-gtk-greeter-settings
+xfce4-terminal
+xarchiver
+ristretto
+mousepad
+galculator
+parole
+gvfs
+gvfs-mtp
+thunar-archive-plugin
+thunar-volman
+xfce4-power-manager
+light-locker
+xfce4-notifyd
+plymouth
+
+# --- Fonts / theming ---
+ttf-dejavu
+ttf-liberation
+noto-fonts
+noto-fonts-emoji
+papirus-icon-theme
+arc-gtk-theme
+
+# --- Browser ---
+firefox
+
+# --- Installer ---
+calamares
+qt6-svg
+qt6-declarative
+kpmcore
+boost
+
+# --- AetherOS branding / helper scripts are copied in via airootfs, not pacman ---
+
+# --- Live-ISO-only conveniences (safe to leave on installed system too) ---
+fastfetch
+cmatrix
+dialog
+zenity
+dconf
+libcanberra
+sound-theme-freedesktop

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+build_id="$(grep -m1 '^BUILD_ID=' /etc/os-release 2>/dev/null | cut -d= -f2)"
+echo "AetherOS ${build_id:-rolling} (kernel $(uname -r))"

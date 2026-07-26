@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Aether Info
+Comment=Show AetherOS system information
+Comment[ru]=Информация о системе AetherOS
+Exec=xfce4-terminal --title "Aether Info" --hold -e "aether-info"
+Icon=/usr/share/icons/aetheros/aetheros-logo.png
+Terminal=false
+Categories=System;

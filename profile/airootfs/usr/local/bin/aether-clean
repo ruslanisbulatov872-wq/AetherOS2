@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# aether-clean — free disk space: package cache, orphans, journal
+set -euo pipefail
+
+echo "==> AetherOS: removing orphaned packages..."
+orphans="$(pacman -Qtdq || true)"
+if [ -n "${orphans}" ]; then
+    echo "${orphans}" | sudo pacman -Rns --noconfirm -
+else
+    echo "    No orphans found."
+fi
+
+echo "==> AetherOS: cleaning package cache (keeping latest 2 versions)..."
+if command -v paccache >/dev/null 2>&1; then
+    sudo paccache -rk2
+else
+    sudo pacman -Sc --noconfirm
+fi
+
+echo "==> AetherOS: vacuuming systemd journal (keep 2 weeks)..."
+sudo journalctl --vacuum-time=2weeks || true
+
+echo "==> AetherOS: cleanup complete."
+df -h / | tail -n1

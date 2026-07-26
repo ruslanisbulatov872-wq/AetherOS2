@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# aether-welcome — AetherOS "Start Here" wizard.
+#
+# Runs automatically once, the first time you log in. You can also open it
+# any time from the desktop icon "Начало работы / Get Started", or by
+# typing 'aether-welcome' in the terminal.
+#
+# Everything here is click-only — no commands to remember.
+set -euo pipefail
+
+command -v zenity >/dev/null 2>&1 || {
+    echo "This wizard needs 'zenity' (a small GUI dialog tool)."
+    exit 1
+}
+
+ICON=/usr/share/icons/aetheros/aetheros-logo.png
+
+step() {
+    zenity --info --title="AetherOS" --width=420 --icon-name="${ICON}" --text="$1" 2>/dev/null || true
+}
+
+zenity --question --title="AetherOS" --width=420 --icon-name="${ICON}" \
+    --text="Добро пожаловать в AetherOS! 👋\n\nПоказать быстрый обзор системы? Это займёт 1 минуту.\n\n<i>Welcome to AetherOS — show a 1-minute quick tour?</i>" \
+    --ok-label="Да, покажи" --cancel-label="Пропустить" 2>/dev/null || exit 0
+
+step "🖥️ <b>Рабочий стол</b>\n\nЭто AetherOS — обычный рабочий стол, как в Windows или macOS.\nЗначки на рабочем столе можно открывать двойным кликом.\n\nВ левом верхнем углу — кнопка меню приложений (как \"Пуск\")."
+
+step "📦 <b>Как установить программу</b>\n\nСамый простой способ — значок <b>Aether Store</b> на рабочем столе.\nОткрой его, выбери категорию, нажми на программу — готово.\n\nНе нужно ничего печатать в терминале, если не хочешь."
+
+step "⚙️ <b>Настройки</b>\n\nВсе настройки системы — в одном месте: значок <b>Aether Settings</b>.\nТам можно поменять обои, звук, язык, сеть."
+
+step "🔑 <b>Важно: пароль</b>\n\nСейчас ты вошёл под именем <b>admin</b> с паролем <b>admin</b>.\nЭто пароль по умолчанию — обязательно смени его в Aether Settings → Users,\nособенно если это не тестовая система."
+
+step "❓ <b>Если что-то непонятно</b>\n\nДважды кликни на значок <b>Aether Info</b> на рабочем столе —\nтам простыми словами написано, что и как делать.\n\nЭтот обзор всегда можно открыть заново: значок \"Начало работы\"."
+
+zenity --info --title="AetherOS" --width=420 --icon-name="${ICON}" \
+    --text="Готово! 🎉\n\nПриятного пользования AetherOS.\n\n<i>That's it — enjoy AetherOS.</i>" 2>/dev/null || true
+
+mkdir -p "${HOME}/.local/share/aetheros"
+touch "${HOME}/.local/share/aetheros/welcomed"

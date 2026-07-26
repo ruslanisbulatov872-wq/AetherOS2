@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# Aether Store — simple terminal app store for AetherOS.
+# Browses categories, lets you search/install/remove packages.
+set -euo pipefail
+
+if ! command -v dialog >/dev/null 2>&1; then
+    echo "Aether Store requires 'dialog' (pacman -S dialog)." >&2
+    exit 1
+fi
+
+declare -A CATEGORIES=(
+    [Browsers]="firefox chromium falkon"
+    [Multimedia]="vlc parole audacity gimp inkscape obs-studio"
+    [Development]="code git base-devel docker python nodejs"
+    [Games]="steam lutris wine"
+    [Tools]="htop fastfetch timeshift gparted filezilla"
+)
+
+main_menu() {
+    dialog --backtitle "Aether Store" --title "AetherOS — Aether Store" \
+        --menu "Выберите категорию:" 18 60 8 \
+        Browsers      "Веб-браузеры" \
+        Multimedia    "Мультимедиа" \
+        Development   "Разработка" \
+        Games         "Игры" \
+        Tools         "Системные утилиты" \
+        Search        "Поиск пакета вручную" \
+        Installed     "Показать установленные пакеты" \
+        Quit          "Выход" \
+        2>&1 >/dev/tty
+}
+
+category_menu() {
+    local cat="$1"
+    local items=(${CATEGORIES[$cat]})
+    local menu_args=()
+    for pkg in "${items[@]}"; do
+        if pacman -Qi "$pkg" >/dev/null 2>&1; then
+            menu_args+=("$pkg" "[установлен]")
+        else
+            menu_args+=("$pkg" "не установлен")
+        fi
+    done
+    dialog --backtitle "Aether Store" --title "$cat" \
+        --menu "Выберите пакет:" 18 60 10 "${menu_args[@]}" 2>&1 >/dev/tty
+}
+
+install_or_remove() {
+    local pkg="$1"
+    if pacman -Qi "$pkg" >/dev/null 2>&1; then
+        dialog --yesno "Удалить '$pkg'?" 7 50 && clear && aether remove "$pkg"
+    else
+        dialog --yesno "Установить '$pkg'?" 7 50 && clear && aether install "$pkg"
+    fi
+    read -rp "Нажмите Enter, чтобы продолжить..." _
+}
+
+while true; do
+    choice="$(main_menu)" || { clear; exit 0; }
+    case "$choice" in
+        Quit) clear; exit 0 ;;
+        Search)
+            term="$(dialog --inputbox "Введите название пакета:" 8 50 2>&1 >/dev/tty)" || continue
+            clear
+            aether search "$term" | less
+            ;;
+        Installed)
+            clear
+            aether list | less
+            ;;
+        *)
+            pkg="$(category_menu "$choice")" || continue
+            [ -n "$pkg" ] && install_or_remove "$pkg"
+            ;;
+    esac
+done

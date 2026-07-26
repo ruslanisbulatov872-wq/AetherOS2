@@ -1,0 +1,10 @@
+Совет: 'aether-journal' помнит всё, что ты устанавливал — даже если ты забыл.
+Tip: run 'aether-cycle status' to see today's wallpaper mood.
+Знаешь ли ты? 'aether install <пакет>' работает и для программ из AUR.
+Fun fact: this whole system remembers its own history in ~/.local/share/aetheros/journal.log
+Совет: 'aether-theme dark' и 'aether-theme light' — переключение одной командой.
+Psst — try 'aether-rain' when you need a break.
+Подсказка: 'aether-store' — если не знаешь, что установить.
+The wallpaper you're looking at changes with the time of day. That's Aether Cycle.
+Совет: пароль по умолчанию — admin/admin. Смени его после первого входа: passwd
+Boo! (that's the whole tip, sorry)

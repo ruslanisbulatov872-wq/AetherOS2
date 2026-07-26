@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# aether-update — refresh mirrors and update the whole system
+set -euo pipefail
+
+echo "==> AetherOS: refreshing package databases..."
+sudo pacman -Syy
+
+echo "==> AetherOS: upgrading installed packages..."
+sudo pacman -Su --noconfirm
+
+if command -v yay >/dev/null 2>&1; then
+    echo "==> AetherOS: upgrading AUR packages via yay..."
+    yay -Sua --noconfirm
+fi
+
+echo "==> AetherOS: update complete."

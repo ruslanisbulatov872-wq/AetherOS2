@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=О системе AetherOS
+GenericName=About AetherOS
+Comment=Версия, ядро и фирменные функции AetherOS
+Exec=aether-about-gui
+Icon=/usr/share/icons/aetheros/aetheros-logo.png
+Terminal=false
+Categories=System;

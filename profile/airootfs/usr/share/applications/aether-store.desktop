@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Aether Store
+Comment=Install and remove AetherOS applications
+Comment[ru]=Установка и удаление приложений AetherOS
+Exec=xfce4-terminal --title "Aether Store" -e "aether-store"
+Icon=/usr/share/icons/aetheros/aetheros-logo.png
+Terminal=false
+Categories=System;PackageManager;

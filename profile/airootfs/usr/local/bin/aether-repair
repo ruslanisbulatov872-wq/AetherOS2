@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# aether-repair — attempt to fix common package-database / keyring issues
+set -euo pipefail
+
+echo "==> AetherOS: checking pacman lock..."
+if [ -f /var/lib/pacman/db.lck ]; then
+    echo "    Found stale lock file, removing (make sure no other pacman is running)."
+    sudo rm -f /var/lib/pacman/db.lck
+fi
+
+echo "==> AetherOS: refreshing keyring..."
+sudo pacman -Sy --noconfirm archlinux-keyring || true
+sudo pacman-key --refresh-keys || true
+
+echo "==> AetherOS: verifying local database..."
+sudo pacman -Dk || echo "    Some inconsistencies found above — consider 'sudo pacman -Syyu'."
+
+echo "==> AetherOS: checking for broken/partial installs..."
+sudo pacman -Qk 2>&1 | grep -v "0 missing files" || echo "    No broken packages found."
+
+echo "==> AetherOS: repair pass complete."

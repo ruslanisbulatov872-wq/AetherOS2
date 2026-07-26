@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=AetherOS Cycle Init
+Exec=/usr/local/bin/aether-cycle
+X-GNOME-Autostart-enabled=true
+NoDisplay=true

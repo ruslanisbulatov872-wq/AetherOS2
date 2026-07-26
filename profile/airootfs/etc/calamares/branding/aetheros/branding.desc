@@ -1,0 +1,34 @@
+---
+componentName: aetheros
+
+welcomeStyleCalamares: true
+welcomeExpandingLogo: true
+
+windowExpanding: normal
+windowSize: 800px,520px
+windowPlacement: center
+
+strings:
+    productName:         "AetherOS"
+    shortProductName:     "AetherOS"
+    version:              "Rolling"
+    shortVersion:         "2026"
+    versionedName:        "AetherOS Rolling"
+    shortVersionedName:   "AetherOS"
+    bootloaderEntryName:  "AetherOS"
+    productUrl:           "https://example.invalid/aetheros"
+    supportUrl:           "https://example.invalid/aetheros/support"
+    releaseNotesUrl:      "https://example.invalid/aetheros/release-notes"
+
+images:
+    productLogo:          "logo.png"
+    productIcon:          "logo.png"
+    productWelcome:       "welcome.png"
+
+slideshow: "show.qml"
+
+style:
+   sidebarBackground:    "#0d1426"
+   sidebarText:          "#e6ecff"
+   sidebarTextSelect:    "#5aaaff"
+   sidebarTextCurrent:   "#8c6eff"

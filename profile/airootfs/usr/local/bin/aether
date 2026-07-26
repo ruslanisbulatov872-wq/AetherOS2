@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+# aether — Aether Package Manager
+# A friendly, distro-branded front-end over pacman (and yay for AUR, if installed).
+set -euo pipefail
+
+PROG="aether"
+JOURNAL_DIR="${HOME:-/root}/.local/share/aetheros"
+JOURNAL_FILE="${JOURNAL_DIR}/journal.log"
+
+usage() {
+    cat <<EOF
+Aether Package Manager
+
+Usage:
+  ${PROG} install <pkg...>     Install one or more packages
+  ${PROG} remove  <pkg...>     Remove one or more packages (with dependencies)
+  ${PROG} update               Sync databases and upgrade the whole system
+  ${PROG} search  <term>       Search official repos (and AUR if yay is present)
+  ${PROG} list                 List all explicitly installed packages
+  ${PROG} info    <pkg>        Show detailed info about a package
+  ${PROG} --help                Show this help
+
+Every install/remove/update is recorded in your Aether Journal —
+run 'aether-journal' to see the timeline and undo hints.
+
+Examples:
+  ${PROG} install firefox gimp
+  ${PROG} search text-editor
+  ${PROG} remove parole
+EOF
+}
+
+play_sound() {
+    local event="$1"
+    local f="/usr/share/sounds/aetheros/stereo/${event}.wav"
+    [ -f "$f" ] || return 0
+    ( command -v paplay >/dev/null 2>&1 && paplay "$f" >/dev/null 2>&1 & ) || true
+}
+
+journal_log() {
+    # journal_log <action> <undo-hint> <pkg...>
+    local action="$1"; local undo="$2"; shift 2
+    mkdir -p "${JOURNAL_DIR}"
+    printf '%s | %-8s | %-32s | undo: %s\n' \
+        "$(date '+%Y-%m-%d %H:%M:%S')" "${action}" "$*" "${undo}" >> "${JOURNAL_FILE}"
+}
+
+need_pkgs() {
+    if [ "$#" -eq 0 ]; then
+        echo "error: no package names given" >&2
+        exit 1
+    fi
+}
+
+has_yay() { command -v yay >/dev/null 2>&1; }
+
+cmd="${1:-}"
+shift || true
+
+case "${cmd}" in
+    install)
+        need_pkgs "$@"
+        if has_yay; then
+            yay -S "$@" && ok=1 || ok=0
+        else
+            sudo pacman -S "$@" && ok=1 || ok=0
+        fi
+        if [ "${ok}" = "1" ]; then
+            play_sound complete
+            journal_log install "aether remove $*" "$@"
+        else
+            play_sound dialog-error
+            exit 1
+        fi
+        ;;
+    remove|uninstall)
+        need_pkgs "$@"
+        if sudo pacman -Rns "$@"; then
+            play_sound complete
+            journal_log remove "aether install $*" "$@"
+        else
+            play_sound dialog-error
+            exit 1
+        fi
+        ;;
+    update|upgrade)
+        journal_log update "see pacman -Qm / .pacnew files for details" "full system upgrade"
+        exec aether-update
+        ;;
+    search)
+        need_pkgs "$@"
+        term="$*"
+        echo "== Official repositories =="
+        pacman -Ss "${term}" || true
+        if has_yay; then
+            echo
+            echo "== AUR (via yay) =="
+            yay -Ss "${term}" || true
+        fi
+        ;;
+    list)
+        pacman -Qe
+        ;;
+    info)
+        need_pkgs "$@"
+        pacman -Qi "$@" 2>/dev/null || pacman -Si "$@"
+        ;;
+    -h|--help|help|"")
+        usage
+        ;;
+    *)
+        echo "error: unknown command '${cmd}'" >&2
+        usage
+        exit 1
+        ;;
+esac

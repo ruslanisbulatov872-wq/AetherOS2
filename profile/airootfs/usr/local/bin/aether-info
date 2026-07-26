@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+# aether-info — AetherOS System Information & command reference.
+# Also launchable from the app menu as "Aether Info".
+set -euo pipefail
+
+bold=$(tput bold 2>/dev/null || true)
+reset=$(tput sgr0 2>/dev/null || true)
+green=$(tput setaf 2 2>/dev/null || true)
+blue=$(tput setaf 4 2>/dev/null || true)
+
+os_name="AetherOS"
+os_version="$(grep -m1 '^BUILD_ID=' /etc/os-release 2>/dev/null | cut -d= -f2 || echo unknown)"
+kernel="$(uname -r)"
+desktop="${XDG_CURRENT_DESKTOP:-Aether Desktop (XFCE)}"
+cpu="$(awk -F': ' '/model name/ {print $2; exit}' /proc/cpuinfo 2>/dev/null || echo unknown)"
+ram_total_kb="$(awk '/MemTotal/ {print $2}' /proc/meminfo)"
+ram_used_kb="$(( ram_total_kb - $(awk '/MemAvailable/ {print $2}' /proc/meminfo) ))"
+ram_total="$(( ram_total_kb / 1024 ))"
+ram_used="$(( ram_used_kb / 1024 ))"
+gpu="$(lspci 2>/dev/null | grep -Ei 'vga|3d|display' | head -n1 | sed 's/^[^:]*: //' || echo unknown)"
+uptime_h="$(uptime -p 2>/dev/null || echo unknown)"
+pkg_count="$(pacman -Qq 2>/dev/null | wc -l || echo 0)"
+shell_name="${SHELL:-/bin/bash}"
+user_name="${USER:-admin}"
+
+status="OK"
+systemctl is-system-running >/dev/null 2>&1 || status="DEGRADED"
+
+logo="
+${green}             ::=*+++++-:.
+           :+%@@@@@@@###*=.
+         .=%@%%%@@%%%%%###*-
+         =%@*%%@##@@@@@%##*=.
+         +%: *%@+ :*%%%@%*##-
+         =%..#@@*...%@%@%##*-
+    :+***#%@@%#%@@@%******##+-
+   -#@%@@%#%%*+#%#**#%%%#*+#*=
+  -#%%%%###%@@@@*+%@@@@@@@##*-
+  =%%%%####%@%%%#==+#%@%%@%#*-
+  .=++++*##%@#%%@#=*=*%@%@%%*=.
+     -*+=##%@##@%%#=**+#%%%%##+.
+      .:=##%@#%@@%*#=*=*@%#%##=.
+       .=##%@##@@%*#*+-*%%####+-
+       .=##%%##%%%#####+*%#####+.
+       .=##%@##%@%%######@%####*-
+        :+#*#*+*%@%#######%%####*-
+         ==+++*=-*#######*#%%####*-
+         :-++++=-=+###############*-
+             :-==-:::::=+++++++++++=-:${reset}"
+
+echo -e "${logo}"
+cat <<EOF
+
+${bold}${blue}Быстрый старт для новичка / Quick start${reset}
+  Установить программу:  открой значок "Aether Store" на рабочем столе
+  Открыть настройки:     значок "Aether Settings"
+  Сменить пароль:        Aether Settings → Users
+  Если что-то сломалось: набери в терминале  aether-repair
+  Повторить этот обзор:  значок "Начало работы"
+
+EOF
+cat <<EOF
+${bold}${blue}AetherOS System Information${reset}
+
+${bold}User:${reset}        ${user_name}
+${bold}OS:${reset}          ${os_name}
+${bold}Version:${reset}     ${os_version}
+${bold}Kernel:${reset}      Linux ${kernel}
+${bold}Desktop:${reset}     ${desktop}
+${bold}Shell:${reset}       ${shell_name}
+${bold}CPU:${reset}         ${cpu}
+${bold}RAM:${reset}         ${ram_used} MiB / ${ram_total} MiB
+${bold}GPU:${reset}         ${gpu}
+${bold}Packages:${reset}    ${pkg_count} (pacman$(command -v yay >/dev/null 2>&1 && echo " + AUR via yay"))
+${bold}Uptime:${reset}      ${uptime_h}
+${bold}System Status:${reset} ${status}
+
+${bold}${blue}Aether commands — how to use AetherOS${reset}
+
+  ${bold}Package management (works exactly like Arch — pacman/makepkg/AUR
+  all work directly too, 'aether' is just a friendly wrapper):${reset}
+    aether install <pkg>     sudo pacman -S <pkg>  (or yay for AUR)
+    aether remove <pkg>      sudo pacman -Rns <pkg>
+    aether update             full system upgrade
+    aether search <term>      search official repos + AUR
+    aether list                list installed packages
+    aether-store                browse & install apps by category (TUI)
+
+  ${bold}System:${reset}
+    aether-info                this screen
+    aether-version, aether-about
+    aether-check, aether-report   diagnostics
+    aether-repair, aether-clean   fix / free up space
+    aether-theme light|dark       switch appearance
+    aether-sound-test              preview the 5 system sounds
+
+  ${bold}AetherOS signature features:${reset}
+    aether-journal              your system's own history — every install/
+                                 remove/update, with undo hints
+    aether-cycle status          the wallpaper shifts with the time of day
+                                 (dawn/day/dusk/night) — 'aether-cycle off'
+                                 to pin it, 'aether-cycle on' to resume
+
+  ${bold}Network:${reset}
+    network-info, wifi-info, ip-info
+
+  ${bold}For fun:${reset}
+    aether-rain     — a little digital-rain animation
+    aether-wave     — an animated ASCII sound wave
+
+Full guide: /usr/share/doc/aetheros/GUIDE.md
+EOF

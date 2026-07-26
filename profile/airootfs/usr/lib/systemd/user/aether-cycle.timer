@@ -1,0 +1,10 @@
+[Unit]
+Description=AetherOS Aether Cycle — hourly wallpaper mood check
+
+[Timer]
+OnStartupSec=30
+OnUnitActiveSec=1h
+Persistent=true
+
+[Install]
+WantedBy=default.target

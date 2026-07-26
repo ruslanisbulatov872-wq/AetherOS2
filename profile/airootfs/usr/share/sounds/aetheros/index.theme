@@ -1,0 +1,8 @@
+[Sound Theme]
+Name=AetherOS
+Comment=AetherOS system sounds — soft, layered tones (no harsh beeps)
+Inherits=freedesktop
+Directories=stereo
+
+[stereo]
+OutputProfile=stereo

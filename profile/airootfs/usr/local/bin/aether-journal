@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# aether-journal — AetherOS's signature "system diary".
+#
+# Every 'aether install/remove/update' is quietly recorded. This command
+# shows that timeline, so you always know exactly what changed on your
+# system and when — and how to undo it if needed. No other distro keeps
+# a plain-English, per-user story of its own history like this by default.
+#
+# Usage:
+#   aether-journal            show the full journal
+#   aether-journal today       only today's entries
+#   aether-journal last        show just the most recent entry + undo command
+#   aether-journal clear       erase the journal (asks for confirmation)
+set -euo pipefail
+
+JOURNAL_FILE="${HOME:-/root}/.local/share/aetheros/journal.log"
+green=$(tput setaf 2 2>/dev/null || true)
+bold=$(tput bold 2>/dev/null || true)
+reset=$(tput sgr0 2>/dev/null || true)
+
+header() {
+    echo -e "${green}     .--~~~~--.
+    /  o    o  \\
+   |     ..     |    ${bold}Aether Journal${reset}${green}
+   |   \\____/   |    the story of this system, in its own words
+    \\/\\/\\/\\/\\/\\/${reset}
+"
+}
+
+if [ ! -s "${JOURNAL_FILE}" ]; then
+    header
+    echo "Nothing recorded yet — your journal starts the moment you run"
+    echo "'aether install', 'aether remove', or 'aether update' for the first time."
+    exit 0
+fi
+
+case "${1:-}" in
+    today)
+        header
+        grep "^$(date '+%Y-%m-%d')" "${JOURNAL_FILE}" || echo "No entries yet today."
+        ;;
+    last)
+        header
+        tail -n 1 "${JOURNAL_FILE}"
+        ;;
+    clear)
+        read -rp "This will permanently erase your Aether Journal. Continue? [y/N] " ans
+        if [[ "${ans}" =~ ^[Yy]$ ]]; then
+            : > "${JOURNAL_FILE}"
+            echo "Journal cleared."
+        else
+            echo "Cancelled."
+        fi
+        ;;
+    ""|--help|-h)
+        header
+        cat "${JOURNAL_FILE}"
+        echo
+        echo "Tip: 'aether-journal last' shows the undo command for your most recent change."
+        ;;
+    *)
+        echo "Usage: aether-journal [today|last|clear]" >&2
+        exit 1
+        ;;
+esac

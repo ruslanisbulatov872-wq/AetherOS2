@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# aether-cycle — AetherOS's signature "living wallpaper" feature.
+#
+# The desktop background quietly shifts through 4 moods across the day —
+# dawn, day, dusk, night — each with its own color temperature for the
+# AetherOS light-streak wallpaper. Run automatically every hour via the
+# aether-cycle.timer systemd unit; can also be run manually or forced.
+#
+# Usage:
+#   aether-cycle              apply the wallpaper for the current time
+#   aether-cycle status       show which mood is currently active
+#   aether-cycle set <mood>   force a specific mood (dawn|day|dusk|night)
+#   aether-cycle off          pin the wallpaper to 'day' and stop auto-cycling
+#   aether-cycle on           re-enable automatic cycling
+set -euo pipefail
+
+BG_DIR=/usr/share/backgrounds/aetheros
+STATE_DIR="${HOME:-/root}/.local/share/aetheros"
+DISABLE_FLAG="${STATE_DIR}/cycle-disabled"
+mkdir -p "${STATE_DIR}"
+
+mood_for_hour() {
+    local h="$1"
+    if   (( h >= 5  && h < 8  )); then echo dawn
+    elif (( h >= 8  && h < 18 )); then echo day
+    elif (( h >= 18 && h < 21 )); then echo dusk
+    else echo night
+    fi
+}
+
+apply_mood() {
+    local mood="$1"
+    local file="${BG_DIR}/aetheros-cycle-${mood}.png"
+    [ -f "${file}" ] || { echo "aether-cycle: no wallpaper for mood '${mood}'" >&2; return 1; }
+
+    if command -v xfconf-query >/dev/null 2>&1 && [ -n "${DISPLAY:-}" ]; then
+        for prop in $(xfconf-query -c xfce4-desktop -l 2>/dev/null | grep 'last-image$' || true); do
+            xfconf-query -c xfce4-desktop -p "${prop}" -s "${file}" 2>/dev/null || true
+        done
+    fi
+    echo "${mood}" > "${STATE_DIR}/current-mood"
+}
+
+case "${1:-}" in
+    status)
+        cat "${STATE_DIR}/current-mood" 2>/dev/null || echo "unknown (not run yet)"
+        [ -f "${DISABLE_FLAG}" ] && echo "(auto-cycling is OFF — pinned)"
+        exit 0
+        ;;
+    set)
+        mood="${2:?Usage: aether-cycle set <dawn|day|dusk|night>}"
+        apply_mood "${mood}"
+        exit 0
+        ;;
+    off)
+        touch "${DISABLE_FLAG}"
+        apply_mood day
+        echo "Aether Cycle disabled — wallpaper pinned to 'day'."
+        exit 0
+        ;;
+    on)
+        rm -f "${DISABLE_FLAG}"
+        echo "Aether Cycle enabled — wallpaper will follow the time of day again."
+        ;;
+esac
+
+if [ -f "${DISABLE_FLAG}" ]; then
+    exit 0
+fi
+
+current_hour="$(date +%H)"
+current_hour="${current_hour#0}"   # strip leading zero (avoid octal parsing)
+mood="$(mood_for_hour "${current_hour:-0}")"
+apply_mood "${mood}"

@@ -1,0 +1,32 @@
+name: Build AetherOS ISO
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'profile/**'
+      - 'build.sh'
+      - '.github/workflows/build-iso.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Build AetherOS.iso inside an Arch Linux container
+        run: |
+          docker run --rm --privileged \
+            -v "${{ github.workspace }}:/aetheros" \
+            -w /aetheros \
+            archlinux:latest \
+            bash -c "pacman -Syu --noconfirm && pacman -S --noconfirm --needed archiso git base-devel grub syslinux dosfstools mtools && pacman-key --recv-key 3056513887B78AEB --keyserver keyserver.ubuntu.com && pacman-key --lsign-key 3056513887B78AEB && pacman -U --noconfirm 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-keyring.pkg.tar.zst' 'https://cdn-mirror.chaotic.cx/chaotic-aur/chaotic-mirrorlist.pkg.tar.zst' && bash build.sh"
+
+      - name: Upload AetherOS.iso as a downloadable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AetherOS-iso
+          path: AetherOS.iso
+          retention-days: 14
